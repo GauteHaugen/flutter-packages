@@ -9,11 +9,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:webview_flutter_android/src/android_webview.dart'
+    hide WebResourceError, WebResourceRequest, WebResourceResponse;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_proxy.dart';
 import 'android_webview.dart' as android_webview;
-import 'android_webview_api_impls.dart';
 import 'instance_manager.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
@@ -1409,9 +1410,22 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         String mimetype,
         int contentLength,
       ) {
-        if (weakThis.target != null) {
+        final DownloadStartCallback? onDownloadStart =
+            weakThis.target?._onDownloadStart;
+
+        if (onDownloadStart == null) {
           weakThis.target?._handleNavigation(url, isForMainFrame: true);
+
+          return;
         }
+
+        onDownloadStart(
+          url,
+          userAgent,
+          contentDisposition,
+          mimetype,
+          contentLength,
+        );
       },
     );
   }
@@ -1455,6 +1469,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  DownloadStartCallback? _onDownloadStart;
 
   void _handleNavigation(
     String url, {
@@ -1558,5 +1573,12 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnDownloadStart(
+    DownloadStartCallback onDownloadStart,
+  ) async {
+    _onDownloadStart = onDownloadStart;
   }
 }
