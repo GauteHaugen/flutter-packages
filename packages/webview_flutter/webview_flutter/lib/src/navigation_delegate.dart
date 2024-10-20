@@ -51,6 +51,13 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    void Function(
+      String url,
+      String userAgent,
+      String contentDisposition,
+      String mimetype,
+      int contentLength,
+    )? onDownloadStart,
   }) : this.fromPlatformCreationParams(
           const PlatformNavigationDelegateCreationParams(),
           onNavigationRequest: onNavigationRequest,
@@ -61,6 +68,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
+          onDownloadStart: onDownloadStart,
         );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
@@ -105,6 +113,13 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    void Function(
+      String url,
+      String userAgent,
+      String contentDisposition,
+      String mimetype,
+      int contentLength,
+    )? onDownloadStart,
   }) : this.fromPlatform(
           PlatformNavigationDelegate(params),
           onNavigationRequest: onNavigationRequest,
@@ -115,6 +130,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
+          onDownloadStart: onDownloadStart,
         );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
@@ -130,6 +146,13 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     HttpAuthRequestCallback? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    void Function(
+      String url,
+      String userAgent,
+      String contentDisposition,
+      String mimetype,
+      int contentLength,
+    )? onDownloadStart,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
@@ -154,6 +177,9 @@ class NavigationDelegate {
     }
     if (onHttpError != null) {
       platform.setOnHttpError(onHttpError);
+    }
+    if (onDownloadStart != null) {
+      platform.setOnDownloadStart(onDownloadStart);
     }
   }
 
