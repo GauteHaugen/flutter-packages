@@ -6,8 +6,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'types/types.dart';
 
+import 'types/types.dart';
 import 'webview_platform.dart' show WebViewPlatform;
 
 /// Signature for callbacks that report a pending navigation request.
@@ -33,6 +33,15 @@ typedef UrlChangeCallback = void Function(UrlChange change);
 /// Signature for callbacks that notify the host application of an
 /// authentication request.
 typedef HttpAuthRequestCallback = void Function(HttpAuthRequest request);
+
+/// Signature for callbacks that notify the host application of an download start
+typedef DownloadStartCallback = void Function(
+  String url,
+  String userAgent,
+  String contentDisposition,
+  String mimetype,
+  int contentLength,
+);
 
 /// An interface defining navigation events that occur on the native platform.
 ///
@@ -141,6 +150,13 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   Future<void> setOnHttpAuthRequest(HttpAuthRequestCallback onHttpAuthRequest) {
     throw UnimplementedError(
       'setOnHttpAuthRequest is not implemented on the current platform.',
+    );
+  }
+
+  /// Invoked when the web view is requesting a download start
+  Future<void> setOnDownloadStart(DownloadStartCallback onDownloadStart) {
+    throw UnimplementedError(
+      'setOnDownloadStart is not implemented on the current platform',
     );
   }
 }
